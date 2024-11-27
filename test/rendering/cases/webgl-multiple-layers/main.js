@@ -1,9 +1,10 @@
 import DataTile from '../../../../src/ol/source/DataTile.js';
 import KML from '../../../../src/ol/format/KML.js';
 import Map from '../../../../src/ol/Map.js';
-import PointsLayer from '../../../../src/ol/layer/WebGLPoints.js';
+import VectorLayer from '../../../../src/ol/layer/Vector.js';
 import TileLayer from '../../../../src/ol/layer/WebGLTile.js';
 import VectorSource from '../../../../src/ol/source/Vector.js';
+import WebGLVectorRenderer from 'ol/renderer/webgl/VectorLayer.js';
 import View from '../../../../src/ol/View.js';
 import XYZ from '../../../../src/ol/source/XYZ.js';
 
@@ -18,6 +19,17 @@ labelContext.textAlign = 'center';
 labelContext.font = '16px sans-serif';
 const labelLineHeight = 16;
 
+class WebGLVectorLayer extends VectorLayer {
+  createRenderer() {
+    return new WebGLVectorRenderer(this, {
+        style: {
+          'circle-radius': 3,
+          'circle-fill-color': 'orange',
+        },
+    });
+  }
+}
+
 new Map({
   layers: [
     new TileLayer({
@@ -26,7 +38,7 @@ new Map({
         transition: 0,
       }),
     }),
-    new PointsLayer({
+    new WebGLVectorLayer({
       opacity: 0.5,
       source: new VectorSource({
         url: '/data/2012_Earthquakes_Mag5.kml',
@@ -34,10 +46,6 @@ new Map({
           extractStyles: false,
         }),
       }),
-      style: {
-        'circle-radius': 3,
-        'circle-fill-color': 'orange',
-      },
     }),
     new TileLayer({
       source: new DataTile({
